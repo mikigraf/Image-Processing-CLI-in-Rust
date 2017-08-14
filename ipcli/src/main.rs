@@ -18,6 +18,12 @@ fn main() {
                                .help("Specifies operation to be done on the image")
                                .takes_value(true)
                                .required(true))
+                          .arg(Arg::with_name("value")
+                               .short("v")
+                               .long("value")
+                               .help("Value for the transformation. To see what values are needed, check the documentation.")
+                               .takes_value(true)
+                               .required(false))
                           .arg(Arg::with_name("image")
                                .short("i")
                                .long("image")
@@ -25,58 +31,96 @@ fn main() {
                                .help("Opens specified image file and uses it for transformations.")
                                .takes_value(true)
                                .required(true))
-                          .arg(Arg::with_name("save")
-                               .short("s")
-                               .long("save")
-                               .value_name("FILE")
-                               .help("Outputs transformed image into specified file OR uses the second file to calculate the perceptual hash values and outputs their difference")
-                               .takes_value(true)
-                               .required(true))
                           .get_matches();
 
     let imagePath = matches.value_of("image").unwrap_or("empty");
     println!("Transforming the image: {}", imagePath);
 
-    let savePath = matches.value_of("save").unwrap_or("empty");
-    println!("Into: {}", savePath);
-
     let operation = matches.value_of("operation").unwrap_or("empty");
-    println!("Operation: {}", operation);
+    println!("Using operation: {}", operation);
+
+    let value = matches.value_of("value").unwrap_or("empty");
+    println!("Value: {}", value);
 
     match operation.as_ref(){
-        "copy" => {openAndSave(imagePath, savePath)}
-        "thumbnail" => {createThumnbail(imagePath, savePath)}
+        "copy" => {copy(imagePath)}
+        "thumbnail" => {
+            let size: u32 = value.parse().unwrap();
+            createThumnbail(imagePath, size)}
+        "blur" => {
+            let v : f32 = value.parse().unwrap();
+            gaussianBlur(imagePath,v)}
+        "brighten" => {
+            let v: i32 = value.parse().unwrap();
+            brighten(imagePath,v)}
+        "huerotate" => {
+            let v: i32 = value.parse().unwrap();
+            huerotate(imagePath,v)}
+        "contrast" => {
+            let v: f32 = value.parse().unwrap();
+            contrast(imagePath,v);}
         _ => {println!("Not implemented yet!")}
     }
+}
 
-    match matches.occurrences_of("v") {
-        0 => println!("No verbose info"),
-        1 => println!("Some verbose info"),
-        2 => println!("Tons of verbose info"),
-        3 | _ => println!("Don't be crazy"),
+
+fn createThumnbail(i: &str, size: u32){
+    let operation = "Thumbnail";
+    let img = image::open(i).expect("Opening image failed");
+    let thumbnail = img.resize(size,size, FilterType::Lanczos3);
+    saveFile(&thumbnail, &i, &operation);
+
+}
+
+fn copy(i: &str){
+    let operation = "Copy";
+    let img = image::open(i).expect("Opening image failed");
+    saveFile(&img, &i, &operation);
+}
+
+fn gaussianBlur(i: &str, v: f32){
+    let operation = "GuassianBlur";
+    let img = image::open(i).expect("Opening image failed");
+    let blurred = img.blur(v);
+    saveFile(&blurred, &i, &operation);
+}
+
+fn brighten(i: &str,v: i32){
+    let operation = "Brighten";
+    let img = image::open(i).expect("Opening image failed");
+    let brightened = img.brighten(v);
+    saveFile(&brightened, &i, &operation);
+}
+
+fn huerotate(i: &str, v: i32){
+    let operation = "Huerotate";
+    let img = image::open(i).expect("Opening image failed");
+    let huerotated = img.huerotate(v);
+    saveFile(&huerotated, &i, &operation);
+}
+
+fn contrast(i: &str, v: f32){
+    let operation = "AdjustContrast";
+    let img = image::open(i).expect("Opening image failed");
+    let contrast = img.adjust_contrast(v);
+    saveFile(&contrast, &i, &operation);
+}
+
+fn saveFile(img: &DynamicImage, i: &str, operation: &str){
+    let mut outputPath: String = i.chars().take(i.len()-4).collect();
+    let ext: String = i.chars().skip(i.len()-3).take(3).collect();
+    outputPath.push_str(operation);
+    outputPath.push_str(".");
+    outputPath.push_str(&ext);
+    println!("Output path: {}", outputPath);
+    let mut out = File::create(outputPath).unwrap();
+    match ext.as_ref() {
+        "jpg" | "JPG" => {img.save(&mut out, image::JPEG).expect("Saving image failed");}
+        "png" | "PNG" => {img.save(&mut out, image::PNG).expect("Saving image failed");}
+        "gif" | "GIF" => {img.save(&mut out, image::GIF).expect("Saving image failed");}
+        "bmp" | "BMP" => {img.save(&mut out, image::BMP).expect("Saving image failed");}
+        "ico" | "ICO" => {img.save(&mut out, image::ICO).expect("Saving image failed");}
+        _ => {println!("Unsupported file format")}
     }
-}
-
-
-fn createThumnbail(i: &str, s: &str){
-    let img = image::open(i).expect("Opening image failed");
-    let thumbnail = img.resize(120,120, FilterType::Lanczos3);
-    saveFile(&thumbnail, &i, &s);
-
-}
-
-fn openAndSave(i: &str, s: &str){
-    let img = image::open(i).expect("Opening image failed");
-    saveFile(&img, &i, &s);
-}
-
-fn saveFile(img: &DynamicImage, i: &str, s: &str){
-        let mut out = File::create(s).unwrap();
-        let ext: String = i.chars().skip(i.len()-3).take(3).collect();
-        match ext.as_ref() {
-            "jpg" => {img.save(&mut out, image::JPEG).expect("Saving image failed");}
-            "png" => {img.save(&mut out, image::PNG).expect("Saving image failed");}
-            _ => {println!("something else")}
-        }
 }
 
