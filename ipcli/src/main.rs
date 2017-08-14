@@ -34,7 +34,6 @@ fn main() {
                                .required(true))
                           .get_matches();
 
-    // Gets a value for config if supplied by user, or defaults to "default.conf"
     let imagePath = matches.value_of("image").unwrap_or("empty");
     println!("Transforming the image: {}", imagePath);
 
@@ -49,9 +48,7 @@ fn main() {
         "thumbnail" => {createThumnbail(imagePath, savePath)}
         _ => {println!("Not implemented yet!")}
     }
-    //openAndSave(imagePath, savePath);
-    // Vary the output based on how many times the user used the "verbose" flag
-    // (i.e. 'myprog -v -v -v' or 'myprog -vvv' vs 'myprog -v'
+
     match matches.occurrences_of("v") {
         0 => println!("No verbose info"),
         1 => println!("Some verbose info"),
@@ -60,28 +57,26 @@ fn main() {
     }
 }
 
+
 fn createThumnbail(i: &str, s: &str){
     let img = image::open(i).expect("Opening image failed");
-    // get the type of the image
     let thumbnail = img.resize(120,120, FilterType::Lanczos3);
-    let ext: String = i.chars().skip(i.len()-3).take(3).collect();
-    let mut out = File::create(s).unwrap();
-    match ext.as_ref() {
-        "jpg" => {thumbnail.save(&mut out, image::JPEG).expect("Saving image failed");}
-        "png" => {thumbnail.save(&mut out, image::PNG).expect("Saving image failed");}
-        _ => {println!("something else")}
-    }
+    saveFile(&thumbnail, &i, &s);
+
 }
 
 fn openAndSave(i: &str, s: &str){
     let img = image::open(i).expect("Opening image failed");
-    // get the type of the image
-    let ext: String = i.chars().skip(i.len()-3).take(3).collect();
-    let mut out = File::create(s).unwrap();
-    match ext.as_ref() {
-        "jpg" => {img.save(&mut out, image::JPEG).expect("Saving image failed");}
-        "png" => {img.save(&mut out, image::PNG).expect("Saving image failed");}
-        _ => {println!("something else")}
-    }
-    
+    saveFile(&img, &i, &s);
 }
+
+fn saveFile(img: &DynamicImage, i: &str, s: &str){
+        let mut out = File::create(s).unwrap();
+        let ext: String = i.chars().skip(i.len()-3).take(3).collect();
+        match ext.as_ref() {
+            "jpg" => {img.save(&mut out, image::JPEG).expect("Saving image failed");}
+            "png" => {img.save(&mut out, image::PNG).expect("Saving image failed");}
+            _ => {println!("something else")}
+        }
+}
+
