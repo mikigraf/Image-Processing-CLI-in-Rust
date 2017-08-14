@@ -6,3 +6,5 @@ authors = ["Mikołaj Wawrzyniak <mikolajspejs@gmail.com>"]
 [dependencies]
 clap = "*"
 image = "0.15.0"
+
+
