@@ -8,7 +8,7 @@ use image::DynamicImage;
 use std::path::Path;
 
 fn main() {
-     let matches = App::new("IPCLI")
+     let matches = App::new("IPCLI ")
                           .version("0.1")
                           .author("Mikolaj Wawrzyniak <mikolaj.wawrzyniak at fh-dortmund.de>")
                           .about("Basic CLI for image processing")
@@ -59,6 +59,9 @@ fn main() {
         "contrast" => {
             let v: f32 = value.parse().unwrap();
             contrast(imagePath,v);}
+        "grayscale" => {
+            grayscale(imagePath);
+        }
         _ => {println!("Not implemented yet!")}
     }
 }
@@ -103,6 +106,13 @@ fn contrast(i: &str, v: f32){
     let operation = "AdjustContrast";
     let img = image::open(i).expect("Opening image failed");
     let contrast = img.adjust_contrast(v);
+    saveFile(&contrast, &i, &operation);
+}
+
+fn grayscale(i: &str){
+    let operation = "Grayscale";
+    let img = image::open(i).expect("Opening image failed");
+    let contrast = img.grayscale();
     saveFile(&contrast, &i, &operation);
 }
 
