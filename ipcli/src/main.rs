@@ -15,21 +15,23 @@ fn main() {
                                .long("image")
                                .value_name("FILE")
                                .help("Opens specified image file and uses it for transformations.")
-                               .takes_value(true))
+                               .takes_value(true)
+                               .required(true))
                           .arg(Arg::with_name("save")
                                .short("s")
                                .long("save")
                                .value_name("FILE")
-                               .help("Copies provided image to specified file.")
-                               .takes_value(true))
+                               .help("Outputs transformed image into specified file.")
+                               .takes_value(true)
+                               .required(true))
                           .get_matches();
 
     // Gets a value for config if supplied by user, or defaults to "default.conf"
     let imagePath = matches.value_of("image").unwrap_or("empty");
-    println!("Value for image path: {}", imagePath);
+    println!("Transforming the image: {}", imagePath);
 
     let savePath = matches.value_of("save").unwrap_or("empty");
-    println!("Value for save path: {}", savePath);
+    println!("Into: {}", savePath);
 
     openAndSave(imagePath, savePath);
     // Vary the output based on how many times the user used the "verbose" flag
@@ -44,6 +46,13 @@ fn main() {
 
 fn openAndSave(i: &str, s: &str){
     let img = image::open(i).expect("Opening image failed");
+    // get the type of the image
+    let ext: String = i.chars().skip(i.len()-3).take(3).collect();
     let mut out = File::create(s).unwrap();
-    img.save(&mut out, image::PNG).expect("Saving image failed");
+    match ext.as_ref() {
+        "jpg" => {img.save(&mut out, image::JPEG).expect("Saving image failed");}
+        "png" => {img.save(&mut out, image::PNG).expect("Saving image failed");}
+        _ => {println!("something else")}
+    }
+    
 }
