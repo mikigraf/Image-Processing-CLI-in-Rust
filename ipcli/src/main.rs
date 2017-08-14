@@ -62,6 +62,9 @@ fn main() {
         "grayscale" => {
             grayscale(imagePath);
         }
+        "invert" => {
+            invert(imagePath);
+        }
         _ => {println!("Not implemented yet!")}
     }
 }
@@ -112,8 +115,15 @@ fn contrast(i: &str, v: f32){
 fn grayscale(i: &str){
     let operation = "Grayscale";
     let img = image::open(i).expect("Opening image failed");
-    let contrast = img.grayscale();
-    saveFile(&contrast, &i, &operation);
+    let grayscale = img.grayscale();
+    saveFile(&grayscale, &i, &operation);
+}
+
+fn invert(i: &str){
+    let operation = "Invert";
+    let mut img = image::open(i).expect("Opening image failed");
+    img.invert();
+    saveFile(&img, &i, &operation);
 }
 
 fn saveFile(img: &DynamicImage, i: &str, operation: &str){
