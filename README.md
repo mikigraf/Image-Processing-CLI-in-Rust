@@ -11,10 +11,10 @@ https://github.com/PistonDevelopers/image
 
 ### Copy image
 ```
-ipcli -o copy --image "D:\Image\hotelroom.jpg" --save "D:\Image\save.jpg"
+ipcli -o copy --image "D:\Image\hotelroom.jpg"
 ```
 
 ### Create a thumbnail 
 ```
-ipcli -o thumbnail --image "D:\Image\hotelroom.jpg" --save "D:\Image\saveThumbnail.jpg"
+ipcli -o thumbnail --image "D:\Image\hotelroom.jpg"
 ```
