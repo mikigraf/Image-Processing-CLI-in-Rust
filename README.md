@@ -12,7 +12,7 @@ https://github.com/PistonDevelopers/image
 * ***brighten:*** -o brighten -v 10
 * ***huerotate:*** -o huerotate -v 10
 * ***contrast:*** -o contrast -v 20.0
-
+* ***grayscale***: -o grayscale 
 
 ## Examples 
 
