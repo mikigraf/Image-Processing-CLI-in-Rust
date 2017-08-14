@@ -3,7 +3,15 @@
 Simple CLI for processing images.
 
 This project uses following libraries:
+
 https://github.com/PistonDevelopers/image
+
+
+Processed images are being stored in the same folder as the source image using the name of the source image with an appended suffix.
+
+Source: hotelroom.jpg
+Copy: hotelroomCopy.jpg
+Blur: hotelroomBlur.jpg
 
 ## Implemented functions
 * ***Copy:*** -o copy 
@@ -13,6 +21,7 @@ https://github.com/PistonDevelopers/image
 * ***huerotate:*** -o huerotate -v 10
 * ***contrast:*** -o contrast -v 20.0
 * ***grayscale***: -o grayscale 
+* ***invert***L -o invert
 
 ## Examples 
 
