@@ -5,5 +5,16 @@ Simple CLI for processing images.
 This project uses following libraries:
 https://github.com/PistonDevelopers/image
 
-## Copy image
+## Implemented functions
+* Copy
+* Thumbnail
+
+### Copy image
+```
 ipcli --image "D:\Image\hotelroom.jpg" --save "D:\Image\save.jpg"
+```
+
+### Create a thumbnail 
+```
+ipcli -o thumbnail --image "D:\Image\hotelroom.jpg" --save "D:\Image\saveThumbnail.jpg"
+```
