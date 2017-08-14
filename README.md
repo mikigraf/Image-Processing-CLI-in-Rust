@@ -10,8 +10,11 @@ https://github.com/PistonDevelopers/image
 Processed images are being stored in the same folder as the source image using the name of the source image with an appended suffix.
 
 Source: hotelroom.jpg
+
 Copy: hotelroomCopy.jpg
+
 Blur: hotelroomBlur.jpg
+
 
 ## Implemented functions
 * ***Copy:*** -o copy 
