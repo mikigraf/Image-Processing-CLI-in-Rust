@@ -47,3 +47,5 @@ Temporary Items
 .apdisk
 ipcli/target/debug/.fingerprint/adler32-322a5a476cfdaff3/dep-lib-adler32-322a5a476cfdaff3
 ipcli/target/debug/
+*.cargo-lock
+ipcli/target/*
