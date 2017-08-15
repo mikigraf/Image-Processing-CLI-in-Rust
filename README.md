@@ -17,6 +17,7 @@ Blur: hotelroomBlur.jpg
 
 
 ## Implemented functions
+* ***Average color*** -o average 
 * ***Copy:*** -o copy 
 * ***Thumbnail:*** -o thumbnail -v 96
 * ***blur:*** -o blur -v 4.0 
@@ -24,7 +25,7 @@ Blur: hotelroomBlur.jpg
 * ***huerotate:*** -o huerotate -v 10
 * ***contrast:*** -o contrast -v 20.0
 * ***grayscale***: -o grayscale 
-* ***invert***L -o invert
+* ***invert*** -o invert
 
 ## Examples 
 
