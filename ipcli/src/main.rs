@@ -43,6 +43,7 @@ fn main() {
     println!("Value: {}", value);
 
     match operation.as_ref(){
+        "average" => {averageColor(imagePath)}
         "copy" => {copy(imagePath)}
         "thumbnail" => {
             let size: u32 = value.parse().unwrap();
@@ -69,6 +70,23 @@ fn main() {
     }
 }
 
+fn averageColor(i: &str){
+    let img = image::open(i).expect("Opening image failed");
+    let mut r: u32 = 0;
+    let mut g: u32 = 0;
+    let mut b: u32 = 0;
+    let (width,height) = img.dimensions();
+    for x in 0..(width){
+        for y in 0..(height){
+            let px = img.get_pixel(x,y);
+            let rgb = px.to_rgb();
+            r = (r as u32 + rgb.data[0] as u32)/2;
+            g = (g as u32 + rgb.data[1] as u32)/2;
+            b = (b as u32 + rgb.data[2] as u32)/2;
+        }
+    }
+    println!("Average color is: RGB {} {} {}",r,g,b);
+}
 
 fn createThumnbail(i: &str, size: u32){
     let operation = "Thumbnail";
