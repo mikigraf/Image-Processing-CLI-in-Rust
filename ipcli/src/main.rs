@@ -153,7 +153,7 @@ fn saveFile(img: &DynamicImage, i: &str, operation: &str){
     println!("Output path: {}", outputPath);
     let mut out = File::create(outputPath).unwrap();
     match ext.as_ref() {
-        "jpg" | "JPG" => {img.save(&mut out, image::JPEG).expect("Saving image failed");}
+        "jpg" | "JPG" | "jpeg" | "JPEG" => {img.save(&mut out, image::JPEG).expect("Saving image failed");}
         "png" | "PNG" => {img.save(&mut out, image::PNG).expect("Saving image failed");}
         "gif" | "GIF" => {img.save(&mut out, image::GIF).expect("Saving image failed");}
         "bmp" | "BMP" => {img.save(&mut out, image::BMP).expect("Saving image failed");}
