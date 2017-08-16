@@ -47,3 +47,26 @@ ipcli -o thumbnail -v 96 --image "D:\Image\hotelroom.jpg"
 ```
 ipcli -o histogram -i "D:\Image\hotelroom.jpg"
 ```
+
+
+
+
+
+```
+IPCLI  0.1
+Mikolaj Wawrzyniak <mikolaj.wawrzyniak at fh-dortmund.de>
+Basic CLI for image processing
+
+USAGE:
+    ipcli [OPTIONS] --image <FILE> --operation <operation>
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+OPTIONS:
+    -i, --image <FILE>             Opens specified image file and uses it for transformations.
+    -o, --operation <operation>    Specifies operation to be done on the image
+    -v, --value <value>            Value for the transformation. To see what values are needed, check the
+                                   documentation.
+                                   ```
