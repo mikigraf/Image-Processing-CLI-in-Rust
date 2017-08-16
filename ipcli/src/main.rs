@@ -1,11 +1,9 @@
 extern crate clap;
 extern crate image;
-extern crate num;
 
 use clap::{Arg,App,SubCommand};
 use std::fs::File;
 use image::{FilterType, GenericImage, Pixel,ImageBuffer,Rgb};
-use num::complex::Complex;
 use image::DynamicImage;
 use std::path::Path;
 use std::collections::HashMap;
@@ -210,7 +208,7 @@ fn histogramGrayscale(i: &str){
         match occurences.get(&i) {
             Some(&value) => {
                 let mut height = ((value as f32 / maxValue as f32) * 300.0) as u8;
-                let mut pixel = image.get_pixel_mut(cc, height as u32);
+                let mut pixel = image.get_pixel_mut(cc, (HEIGHT-1) - height as u32);
                 pixel.data = [0,0,0];
             },
             _ => println!("Value out of bounds #BarryBonds"),

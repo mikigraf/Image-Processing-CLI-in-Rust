@@ -49,3 +49,4 @@ ipcli/target/debug/.fingerprint/adler32-322a5a476cfdaff3/dep-lib-adler32-322a5a4
 ipcli/target/debug/
 *.cargo-lock
 ipcli/target/*
+ipcli/Cargo.lock
