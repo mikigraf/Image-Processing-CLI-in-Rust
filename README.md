@@ -17,6 +17,7 @@ Blur: hotelroomBlur.jpg
 
 
 ## Implemented functions
+* *** (NAIVE) Histogram for grayscale images*** -o histogramGrayscale 
 * ***Average color*** -o average 
 * ***Copy:*** -o copy 
 * ***Thumbnail:*** -o thumbnail -v 96
