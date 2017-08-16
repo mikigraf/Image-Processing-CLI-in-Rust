@@ -50,3 +50,4 @@ ipcli/target/debug/
 *.cargo-lock
 ipcli/target/*
 ipcli/Cargo.lock
+ipcli/Cargo.lock

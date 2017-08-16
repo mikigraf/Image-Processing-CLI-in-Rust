@@ -68,6 +68,7 @@ fn main() {
             invert(imagePath);
         }
         "histogramGrayscale" => {histogramGrayscale(imagePath)}
+        "histogram" => {histogram(imagePath)}
         _ => {println!("Not implemented yet!")}
     }
 }
@@ -210,6 +211,133 @@ fn histogramGrayscale(i: &str){
                 let mut height = ((value as f32 / maxValue as f32) * 300.0) as u8;
                 let mut pixel = image.get_pixel_mut(cc, (HEIGHT-1) - height as u32);
                 pixel.data = [0,0,0];
+            },
+            _ => println!("Value out of bounds #BarryBonds"),
+        }
+        cc = cc + 1;
+    }
+
+    let mut outputPath: String = i.chars().take(i.len()-4).collect();
+    let ext: String = i.chars().skip(i.len()-3).take(3).collect();
+    outputPath.push_str(operation);
+    outputPath.push_str(".");
+    outputPath.push_str(&ext);
+    println!("Output path: {}", outputPath);
+    image.save(outputPath).unwrap();
+}
+
+/// Generate histogram for grayscale images
+fn histogram(i: &str){
+    let operation = "Histogram";
+    // size of the output image containing the histogram
+    let WIDTH = 255;
+    let HEIGHT = 200;
+
+    // open image and convert it to grayscale
+    let img = image::open(i).expect("Opening image failed");
+
+    // create a hashmap for storing the number of occurences of each intensity
+    let mut occurencesR = HashMap::new();
+    let mut occurencesG = HashMap::new();
+    let mut occurencesB = HashMap::new();
+    // and fill it with a placeholder value
+    for fill in 0..255{
+        &occurencesR.insert(fill,0);   
+        &occurencesG.insert(fill,0);  
+        &occurencesB.insert(fill,0);       
+    }
+
+    // iterate over each pixel in the image and count the occurences of each intensity
+    let (width,height) = img.dimensions();
+    for w in 0..(width){
+        for h in 0..(height){
+            let pixel = img.get_pixel(w,h);
+            let rgb = pixel.to_rgb();
+            let intensityR = rgb.data[0];
+            let intensityG = rgb.data[1];
+            let intensityB = rgb.data[2];
+            match occurencesR.get(&intensityR){
+                Some(&oc) => {
+                    let mut current = oc;
+                    current = current + 1;
+                    &occurencesR.insert(intensityR,current);
+                    }
+                _ => {&occurencesR.insert(w as u8,0);}
+            }
+            match occurencesG.get(&intensityG){
+                Some(&oc) => {
+                    let mut current = oc;
+                    current = current + 1;
+                    &occurencesG.insert(intensityG,current);
+                    }
+                _ => {&occurencesG.insert(w as u8,0);}
+            }
+            match occurencesB.get(&intensityB){
+                Some(&oc) => {
+                    let mut current = oc;
+                    current = current + 1;
+                    &occurencesB.insert(intensityB,current);
+                    }
+                _ => {&occurencesB.insert(w as u8,0);}
+            }
+        }
+    }
+
+    // find highest value of occurences, so that we can use it as 100% in the histogram
+    let mut maxValueR = 0;
+    let mut maxValueG = 0;
+    let mut maxValueB = 0;
+    for (occurencesR, &value) in occurencesR.iter() {
+        if(value > maxValueR){
+            maxValueR = value;
+        }
+    }
+    for (occurencesG, &value) in occurencesG.iter() {
+        if(value > maxValueG){
+            maxValueG = value;
+        }
+    }
+    for (occurencesB, &value) in occurencesB.iter() {
+        if(value > maxValueB){
+            maxValueB = value;
+        }
+    }
+
+    // create image to draw the histogram on
+    let mut image = image::ImageBuffer::<Rgb<u8>, Vec<u8>>::new(WIDTH, HEIGHT);
+
+    // dirty hack: fill the image with white pixels
+    for w in 0..WIDTH{
+        for h in 0..HEIGHT{
+            image.get_pixel_mut(w,h).data = [255,255,255];
+        } 
+    }
+
+    // dirty hack: intensity index
+    let mut cc: u32 = 0;
+    // Potential bug: 254 and 255 cause panic!
+    for i in 0..253{
+        match occurencesR.get(&i) {
+            Some(&value) => {
+                let mut height = ((value as f32 / maxValueR as f32) * 200.0) as u8;
+                let mut pixel = image.get_pixel_mut(cc, (HEIGHT-1) - height as u32);
+                pixel.data = [255,0,0];
+            },
+            _ => println!("Value out of bounds #BarryBonds"),
+        }
+        match occurencesG.get(&i) {
+            Some(&value) => {
+                let mut height = ((value as f32 / maxValueG as f32) * 200.0) as u8;
+                let mut pixel = image.get_pixel_mut(cc, (HEIGHT-1) - height as u32);
+                pixel.data = [0,255,0];
+            },
+            _ => println!("Value out of bounds #BarryBonds"),
+        }
+        match occurencesB.get(&i) {
+            Some(&value) => {
+                let mut height = ((value as f32 / maxValueB as f32) * 200.0) as u8;
+                let mut pixel = image.get_pixel_mut(cc, (HEIGHT-1) - height as u32);
+                pixel.data = [0,0,255];
             },
             _ => println!("Value out of bounds #BarryBonds"),
         }
