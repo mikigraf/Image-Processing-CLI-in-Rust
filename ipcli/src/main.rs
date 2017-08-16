@@ -3,9 +3,10 @@ extern crate image;
 
 use clap::{Arg,App,SubCommand};
 use std::fs::File;
-use image::{FilterType, GenericImage, Pixel};
+use image::{FilterType, GenericImage, Pixel,ImageBuffer,Rgb};
 use image::DynamicImage;
 use std::path::Path;
+use std::collections::HashMap;
 
 fn main() {
      let matches = App::new("IPCLI ")
@@ -34,13 +35,13 @@ fn main() {
                           .get_matches();
 
     let imagePath = matches.value_of("image").unwrap_or("empty");
-    println!("Transforming the image: {}", imagePath);
+    //println!("Transforming the image: {}", imagePath);
 
     let operation = matches.value_of("operation").unwrap_or("empty");
-    println!("Using operation: {}", operation);
+    //println!("Using operation: {}", operation);
 
     let value = matches.value_of("value").unwrap_or("empty");
-    println!("Value: {}", value);
+    //println!("Value: {}", value);
 
     match operation.as_ref(){
         "average" => {averageColor(imagePath)}
@@ -66,6 +67,7 @@ fn main() {
         "invert" => {
             invert(imagePath);
         }
+        "histogramGrayscale" => {histogramGrayscale(imagePath)}
         _ => {println!("Not implemented yet!")}
     }
 }
@@ -83,6 +85,7 @@ fn averageColor(i: &str){
             r = (r as u32 + rgb.data[0] as u32)/2;
             g = (g as u32 + rgb.data[1] as u32)/2;
             b = (b as u32 + rgb.data[2] as u32)/2;
+            println!("R G B {} {} {}", r,g,b);
         }
     }
     println!("Average color is: RGB {} {} {}",r,g,b);
@@ -142,6 +145,84 @@ fn invert(i: &str){
     let mut img = image::open(i).expect("Opening image failed");
     img.invert();
     saveFile(&img, &i, &operation);
+}
+
+/// Generate histogram for grayscale images
+fn histogramGrayscale(i: &str){
+    let operation = "HistogramGrayscale";
+    // size of the output image containing the histogram
+    let WIDTH = 255;
+    let HEIGHT = 200;
+
+    // open image and convert it to grayscale
+    let img = image::open(i).expect("Opening image failed");
+    let grayscale = img.grayscale();
+
+    // create a hashmap for storing the number of occurences of each intensity
+    let mut occurences = HashMap::new();
+    // and fill it with a placeholder value
+    for fill in 0..255{
+        &occurences.insert(fill,0);        
+    }
+
+    // iterate over each pixel in the image and count the occurences of each intensity
+    let (width,height) = grayscale.dimensions();
+    for w in 0..(width){
+        for h in 0..(height){
+            let pixel = grayscale.get_pixel(w,h);
+            let rgb = pixel.to_rgb();
+            let intensity = rgb.data[0];
+            match occurences.get(&intensity){
+                Some(&oc) => {
+                    let mut current = oc;
+                    current = current + 1;
+                    &occurences.insert(intensity,current);
+                    }
+                _ => {&occurences.insert(w as u8,0);}
+            }
+        }
+    }
+
+    // find highest value of occurences, so that we can use it as 100% in the histogram
+    let mut maxValue = 0;
+    for (occurences, &value) in occurences.iter() {
+        if(value > maxValue){
+            maxValue = value;
+        }
+    }
+
+    // create image to draw the histogram on
+    let mut image = image::ImageBuffer::<Rgb<u8>, Vec<u8>>::new(WIDTH, HEIGHT);
+
+    // dirty hack: fill the image with white pixels
+    for w in 0..WIDTH{
+        for h in 0..HEIGHT{
+            image.get_pixel_mut(w,h).data = [255,255,255];
+        } 
+    }
+
+    // dirty hack: intensity index
+    let mut cc: u32 = 0;
+    // Potential bug: 254 and 255 cause panic!
+    for i in 0..253{
+        match occurences.get(&i) {
+            Some(&value) => {
+                let mut height = ((value as f32 / maxValue as f32) * 300.0) as u8;
+                let mut pixel = image.get_pixel_mut(cc, (HEIGHT-1) - height as u32);
+                pixel.data = [0,0,0];
+            },
+            _ => println!("Value out of bounds #BarryBonds"),
+        }
+        cc = cc + 1;
+    }
+
+    let mut outputPath: String = i.chars().take(i.len()-4).collect();
+    let ext: String = i.chars().skip(i.len()-3).take(3).collect();
+    outputPath.push_str(operation);
+    outputPath.push_str(".");
+    outputPath.push_str(&ext);
+    println!("Output path: {}", outputPath);
+    image.save(outputPath).unwrap();
 }
 
 fn saveFile(img: &DynamicImage, i: &str, operation: &str){
