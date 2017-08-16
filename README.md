@@ -1,6 +1,6 @@
 # Image-Processing-CLI-in-Rust
 
-Simple CLI for processing images.
+CLI for processing images in Rust. Some implementation is custom and for some function it uses 3rd party libraries.
 
 This project uses following libraries:
 
@@ -14,6 +14,8 @@ Source: hotelroom.jpg
 Copy: hotelroomCopy.jpg
 
 Blur: hotelroomBlur.jpg
+
+Generated histograms are also stored this way.
 
 
 ## Implemented functions
@@ -39,4 +41,9 @@ ipcli -o copy --image "D:\Image\hotelroom.jpg"
 ### Create a thumbnail 
 ```
 ipcli -o thumbnail -v 96 --image "D:\Image\hotelroom.jpg"
+```
+
+### Generate a historgram of colors
+```
+ipcli -o histogram -i "D:\Image\hotelroom.jpg"
 ```
