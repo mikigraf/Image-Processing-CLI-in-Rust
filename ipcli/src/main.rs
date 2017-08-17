@@ -1,11 +1,10 @@
 extern crate clap;
 extern crate image;
 
-use clap::{Arg,App,SubCommand};
+use clap::{Arg,App};
 use std::fs::File;
-use image::{FilterType, GenericImage, Pixel,ImageBuffer,Rgb};
+use image::{FilterType, GenericImage, Pixel,Rgb};
 use image::DynamicImage;
-use std::path::Path;
 use std::collections::HashMap;
 
 fn main() {
@@ -34,8 +33,8 @@ fn main() {
                                .required(true))
                           .get_matches();
 
-    let imagePath = matches.value_of("image").unwrap_or("empty");
-    //println!("Transforming the image: {}", imagePath);
+    let image_path = matches.value_of("image").unwrap_or("empty");
+    //println!("Transforming the image: {}", image_path);
 
     let operation = matches.value_of("operation").unwrap_or("empty");
     //println!("Using operation: {}", operation);
@@ -44,36 +43,36 @@ fn main() {
     //println!("Value: {}", value);
 
     match operation.as_ref(){
-        "average" => {averageColor(imagePath)}
-        "copy" => {copy(imagePath)}
+        "average" => {average_color(image_path)}
+        "copy" => {copy(image_path)}
         "thumbnail" => {
             let size: u32 = value.parse().unwrap();
-            createThumnbail(imagePath, size)}
+            create_thumbnail(image_path, size)}
         "blur" => {
             let v : f32 = value.parse().unwrap();
-            gaussianBlur(imagePath,v)}
+            gaussian_blur(image_path,v)}
         "brighten" => {
             let v: i32 = value.parse().unwrap();
-            brighten(imagePath,v)}
+            brighten(image_path,v)}
         "huerotate" => {
             let v: i32 = value.parse().unwrap();
-            huerotate(imagePath,v)}
+            huerotate(image_path,v)}
         "contrast" => {
             let v: f32 = value.parse().unwrap();
-            contrast(imagePath,v);}
+            contrast(image_path,v);}
         "grayscale" => {
-            grayscale(imagePath);
+            grayscale(image_path);
         }
         "invert" => {
-            invert(imagePath);
+            invert(image_path);
         }
-        "histogramGrayscale" => {histogramGrayscale(imagePath)}
-        "histogram" => {histogram(imagePath)}
+        "histogramGrayscale" => {histogramGrayscale(image_path)}
+        "histogram" => {histogram(image_path)}
         _ => {println!("Not implemented yet!")}
     }
 }
 
-fn averageColor(i: &str){
+fn average_color(i: &str){
     let img = image::open(i).expect("Opening image failed");
     let mut r: u32 = 0;
     let mut g: u32 = 0;
@@ -92,7 +91,7 @@ fn averageColor(i: &str){
     println!("Average color is: RGB {} {} {}",r,g,b);
 }
 
-fn createThumnbail(i: &str, size: u32){
+fn create_thumbnail(i: &str, size: u32){
     let operation = "Thumbnail";
     let img = image::open(i).expect("Opening image failed");
     let thumbnail = img.resize(size,size, FilterType::Lanczos3);
@@ -106,7 +105,7 @@ fn copy(i: &str){
     saveFile(&img, &i, &operation);
 }
 
-fn gaussianBlur(i: &str, v: f32){
+fn gaussian_blur(i: &str, v: f32){
     let operation = "GuassianBlur";
     let img = image::open(i).expect("Opening image failed");
     let blurred = img.blur(v);
@@ -187,7 +186,7 @@ fn histogramGrayscale(i: &str){
     // find highest value of occurences, so that we can use it as 100% in the histogram
     let mut maxValue = 0;
     for (occurences, &value) in occurences.iter() {
-        if(value > maxValue){
+        if value > maxValue {
             maxValue = value;
         }
     }
@@ -288,17 +287,17 @@ fn histogram(i: &str){
     let mut maxValueG = 0;
     let mut maxValueB = 0;
     for (occurencesR, &value) in occurencesR.iter() {
-        if(value > maxValueR){
+        if value > maxValueR {
             maxValueR = value;
         }
     }
     for (occurencesG, &value) in occurencesG.iter() {
-        if(value > maxValueG){
+        if value > maxValueG {
             maxValueG = value;
         }
     }
     for (occurencesB, &value) in occurencesB.iter() {
-        if(value > maxValueB){
+        if value > maxValueB {
             maxValueB = value;
         }
     }
