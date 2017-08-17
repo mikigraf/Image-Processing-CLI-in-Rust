@@ -69,6 +69,10 @@ fn main() {
         }
         "histogramGrayscale" => {histogramGrayscale(imagePath)}
         "histogram" => {histogram(imagePath)}
+        "binaryTreshold" => {
+            let v: u8 = value.parse().unwrap();
+            binary_treshold(imagePath,v);
+            }
         _ => {println!("Not implemented yet!")}
     }
 }
@@ -146,6 +150,34 @@ fn invert(i: &str){
     let mut img = image::open(i).expect("Opening image failed");
     img.invert();
     saveFile(&img, &i, &operation);
+}
+
+fn binary_treshold(i: &str, low: u8){
+    let operation = "BinaryTreshold";
+    let img = image::open(i).expect("Opening image failed");
+    let mut grayscale = img.grayscale();
+    let (width,height) = img.dimensions();
+    // create image to draw the image after binary treshold
+    let mut image = image::ImageBuffer::<Rgb<u8>, Vec<u8>>::new(width, height);
+    for w in 0..(width){
+        for h in 0..(height){
+            let pixel = grayscale.get_pixel(w,h);
+            let rgb = pixel.to_rgb();
+            let intensity = rgb.data[0];
+            if low < intensity {
+                image.get_pixel_mut(w,h).data = [255,255,255];
+            }else{
+                image.get_pixel_mut(w,h,).data = [0,0,0];
+            }
+        }
+    }
+    let mut outputPath: String = i.chars().take(i.len()-4).collect();
+    let ext: String = i.chars().skip(i.len()-3).take(3).collect();
+    outputPath.push_str(operation);
+    outputPath.push_str(".");
+    outputPath.push_str(&ext);
+    println!("Output path: {}", outputPath);
+    image.save(outputPath).unwrap();
 }
 
 /// Generate histogram for grayscale images
