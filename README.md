@@ -1,5 +1,5 @@
 # Image-Processing-CLI-in-Rust [![Build Status](https://travis-ci.org/spejss/Image-Processing-CLI-in-Rust.svg?branch=master)](https://travis-ci.org/spejss/Image-Processing-CLI-in-Rust)
-CLI for processing images in Rust. Some implementation is custom and for some function it uses 3rd party libraries.
+CLI for processing images in Rust. Some implementation is custom and for some functionality it uses 3rd party libraries.
 
 This project uses following libraries:
 
