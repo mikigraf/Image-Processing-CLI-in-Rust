@@ -1,0 +1,10 @@
+[package]
+name = "ipcli"
+version = "0.1.0"
+authors = ["Mikołaj Wawrzyniak <mikolajspejs@gmail.com>"]
+
+[dependencies]
+clap = "*"
+image = "0.15.0"
+
+
