@@ -18,6 +18,7 @@ Generated histograms are also stored this way.
 
 
 ## Implemented functions
+* ***Binary treshold*** -o binaryTreshold -v 200
 * ***(NAIVE) Histogram for colors (RGB)*** -o histogram 
 * ***(NAIVE) Histogram for grayscale images*** -o histogramGrayscale 
 * ***Average color*** -o average 
